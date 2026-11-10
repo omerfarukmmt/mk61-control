@@ -46,3 +46,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/MK61-Control.exe
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
