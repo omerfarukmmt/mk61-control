@@ -251,7 +251,8 @@ class MK61:
         block[B_EFFECT] = light.effect & 0xFF
         block[B_BRIGHTNESS] = max(0, min(BRIGHTNESS_MAX, int(light.brightness)))
         block[B_DIRECTION] = max(0, min(DIRECTION_MAX, int(light.direction)))
-        block[B_SPEED] = speed_to_fw(light.speed)
+        if speed_from_fw(block[B_SPEED]) != int(light.speed):  # keep the exact byte if unchanged
+            block[B_SPEED] = speed_to_fw(light.speed)
         block[B_LED_STATUS] = 1 if light.led_on else 2
         for i in B_SPECTRUM:  # non-zero flags can force the factory rainbow
             block[i] = 0

@@ -37,3 +37,11 @@ def test_backup_restore():
 
 if __name__ == "__main__":
     test_roundtrip(); test_speed_mapping(); test_backup_restore(); print("ok")
+
+
+def test_unchanged_write_keeps_bytes():
+    with MK61() as kb:
+        before = kb.read_block(1)
+        kb.write_lighting(1, kb.read_lighting(1))
+        after = kb.read_block(1)
+        assert [i for i in range(256) if before[i] != after[i] and i not in range(24, 33)] == []
