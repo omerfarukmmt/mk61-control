@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mk61-control"
+version = "0.1.0"
+description = "Unofficial open-source control app for the GamaKay MK61 keyboard"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = ["hidapi>=0.14", "PySide6>=6.5"]
+
+[project.optional-dependencies]
+cli = []
+
+[project.scripts]
+mk61control = "mk61control.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/omerfarukmmt/mk61-control"
+
+[tool.setuptools.packages.find]
+include = ["mk61control*"]

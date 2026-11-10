@@ -1,0 +1,48 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install hidapi pytest
+      - run: pytest -q tests
+
+  windows:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pyinstaller
+      - name: Build exe
+        run: >
+          pyinstaller --noconfirm --onefile --windowed --name MK61-Control
+          --icon packaging/icon.ico
+          --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.Qt3DCore
+          --exclude-module PySide6.QtQuick --exclude-module PySide6.QtQml
+          --exclude-module PySide6.QtMultimedia --exclude-module PySide6.QtPdf
+          run.pyw
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MK61-Control-windows
+          path: dist/MK61-Control.exe
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MK61-Control.exe
